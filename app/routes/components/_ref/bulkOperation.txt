@@ -1,0 +1,108 @@
+
+--- ショップIDの取得
+{
+  shop {
+    id
+  }
+}
+
+--- 結果
+{
+  "data": {
+    "shop": {
+      "id": "gid://shopify/Shop/66832269599"
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 1,
+      "actualQueryCost": 1,
+      "throttleStatus": {
+        "maximumAvailable": 1000,
+        "currentlyAvailable": 985,
+        "restoreRate": 50
+      }
+    }
+  }
+}
+
+
+--- 商品情報全取得 リクエスト
+mutation {
+  bulkOperationRunQuery(
+    query:"""
+    {
+      shop {
+        id
+        productTags(first: 250) {
+          edges {
+            node
+            cursor
+          }
+          pageInfo {
+            endCursor
+            startCursor
+          }
+        }
+      }
+      products(first: 5) {
+        edges {
+          node {
+            title
+            id
+            tags
+            status
+            productType
+            mediaCount
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+  ) {
+    bulkOperation {
+      id
+      status
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}
+
+--- 進捗確認
+{
+  node(id: "gid://shopify/BulkOperation/3618938618143") {
+    ... on BulkOperation {
+      id
+      status
+      errorCode
+      createdAt
+      completedAt
+      objectCount
+      fileSize
+      url
+      partialDataUrl
+    }
+  }
+}
+
+
+status
+  CANCELED ... オペレーションがキャンセルされた
+  CANCELING ... オペレーションをキャンセル中
+  COMPLETED ... オペレーションが完了した
+  CREATED ... オペレーションが作成された（ばかり）
+  EXPIRED ... オペレーションの有効期限が切れた
+  FAILED ... オペレーションが失敗した
+  RUNNING ... オペレーションは実行中（データ取得中）
+
+
